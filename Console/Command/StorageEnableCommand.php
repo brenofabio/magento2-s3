@@ -113,7 +113,7 @@ class StorageEnableCommand extends Command
 
             # When Magento 2 runs in a Docker Container and S3 is enabled, the container will fail if this command is executed.
             if ($this->storage->getCurrentStorageCode() === \Thai\S3\Model\MediaStorage\File\Storage::STORAGE_MEDIA_S3) {
-                $output->writeln('<error>You are already using S3 as your media file storage backend!</error>');
+                $output->writeln('You are already using S3 as your media file storage backend!');
 
                 return 0;
             }
