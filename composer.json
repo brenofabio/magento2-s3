@@ -1,5 +1,5 @@
 {
-  "name": "rpss2/magento2-s3",
+  "name": "brenofabio/magento2-s3",
   "description": "Use Amazon S3 as the file storage backend for your store.",
   "type": "magento2-module",
   "license": "MIT",
