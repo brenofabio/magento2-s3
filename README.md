@@ -16,10 +16,7 @@ Support
 
 | Magento Version | Supported                     |
 | :-------------- | :---------------------------- |
-| 2.0             | :white_check_mark:            |
-| 2.1             | :white_check_mark:            |
-| 2.2             | :white_check_mark:            |
-| 2.3             | :negative_squared_cross_mark: |
+| 2.4             | :white_check_mark:            |
 
 Magento 2.3 introduced breaking changes, which I am still contemplating how to fix. Please be patient or help contribute to this open source project!
 
