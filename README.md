@@ -18,8 +18,6 @@ Support
 | :-------------- | :---------------------------- |
 | 2.4             | :white_check_mark:            |
 
-Magento 2.3 introduced breaking changes, which I am still contemplating how to fix. Please be patient or help contribute to this open source project!
-
 Account & pricing
 -----------------
 
