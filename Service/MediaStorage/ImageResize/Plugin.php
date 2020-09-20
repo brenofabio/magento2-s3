@@ -1,7 +1,6 @@
 <?php
 namespace Thai\S3\Service\MediaStorage\ImageResize;
 
-use Psr\Log\LoggerInterface;
 use Magento\Catalog\Model\Product\Media\ConfigInterface as MediaConfig;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\Filesystem;
@@ -9,6 +8,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
 use Magento\MediaStorage\Helper\File\Storage\Database;
 use Magento\MediaStorage\Service\ImageResize;
+use Psr\Log\LoggerInterface;
 
 class Plugin
 {
@@ -76,10 +76,6 @@ class Plugin
 
         if (!$this->mediaDirectory->isFile($originalImagePath)) {
             throw new NotFoundException(__('Cannot resize image "%1" - original image not found', $originalImagePath));
-        }
-
-        foreach ($this->getViewImages($this->getThemesInUse()) as $viewImage) {
-            $this->resize($viewImage, $originalImagePath, $originalImageName);
         }
 
         return $proceed($originalImageName);
