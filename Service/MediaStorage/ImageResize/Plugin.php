@@ -1,12 +1,14 @@
 <?php
 namespace Thai\S3\Service\MediaStorage\ImageResize;
 
-use Magento\Framework\Filesystem;
+use Psr\Log\LoggerInterface;
 use Magento\Catalog\Model\Product\Media\ConfigInterface as MediaConfig;
-use Magento\MediaStorage\Helper\File\Storage\Database;
+use Magento\Framework\Exception\NotFoundException;
+use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
-use Psr\Log\LoggerInterface;
+use Magento\MediaStorage\Helper\File\Storage\Database;
+use Magento\MediaStorage\Service\ImageResize;
 
 class Plugin
 {
@@ -55,7 +57,7 @@ class Plugin
      * @param string $originalImageName
      * @throws NotFoundException
      */
-    public function aroundResizeFromImageName(\Magento\MediaStorage\Service\ImageResize $subject, \Closure $proceed, $originalImageName)
+    public function aroundResizeFromImageName($subject, \Closure $proceed, $originalImageName)
     {
         $mediastoragefilename = $this->imageConfig->getMediaPath($originalImageName);
         $originalImagePath = $this->mediaDirectory->getAbsolutePath($mediastoragefilename);
