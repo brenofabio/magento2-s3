@@ -4,6 +4,7 @@ namespace Thai\S3\Console\Command;
 use Magento\Config\Model\Config\Factory;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
+use Magento\Framework\Encryption\Encryptor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
