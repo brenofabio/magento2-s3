@@ -1,5 +1,5 @@
 <?php
-namespace Thai\S3\Service;
+namespace Thai\S3\Service\MediaStorage\ImageResize;
 
 use Magento\Framework\Filesystem;
 use Magento\Catalog\Model\Product\Media\ConfigInterface as MediaConfig;
