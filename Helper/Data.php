@@ -2,8 +2,8 @@
 namespace Thai\S3\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
-use Thai\S3\Model\MediaStorage\File\Storage;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Thai\S3\Model\MediaStorage\File\Storage;
 
 /**
  * Helper for config data.
@@ -15,7 +15,7 @@ class Data extends AbstractHelper
      */
     private $useS3;
 
-   public function __construct(
+    public function __construct(
         EncryptorInterface $encryptor,
         \Magento\Framework\App\Helper\Context $context
 

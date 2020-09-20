@@ -4,6 +4,7 @@ namespace Thai\S3\Console\Command;
 use Magento\Config\Model\Config\Factory;
 use Magento\Framework\App\Area;
 use Magento\Framework\App\State;
+use Magento\Framework\Encryption\Encryptor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,6 +32,11 @@ class ConfigSetCommand extends Command
     private $helper;
 
     /**
+     * @var Encryptor
+     */
+    private $encryptor;
+
+    /**
      * @param State $state
      * @param Factory $configFactory
      * @param S3Helper $helper
@@ -38,11 +44,13 @@ class ConfigSetCommand extends Command
     public function __construct(
         State $state,
         Factory $configFactory,
-        S3Helper $helper
+        S3Helper $helper,
+        Encryptor $encryptor
     ) {
         $this->state = $state;
         $this->helper = $helper;
         $this->configFactory = $configFactory;
+        $this->encryptor = $encryptor;
 
         parent::__construct();
     }
@@ -82,7 +90,12 @@ class ConfigSetCommand extends Command
 
             foreach ($this->getOptions() as $option => $pathValue) {
                 if (!empty($input->getOption($option))) {
-                    $config->setDataByPath('thai_s3/general/' . $pathValue, $input->getOption($option));
+                    if ($pathValue == 'access_key' || $pathValue == 'secret_key') {
+                        $config->setDataByPath('thai_s3/general/' . $pathValue, $this->encryptor->encrypt($input->getOption($option)));
+                    } else {
+                        $config->setDataByPath('thai_s3/general/' . $pathValue, $input->getOption($option));
+                    }
+
                     $config->save();
                 }
             }
