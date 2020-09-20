@@ -47,7 +47,7 @@
         <plugin name="thai_s3_model_store_store_plugin" type="Thai\S3\Model\Store\Store\Plugin" />
     </type>
     <type name="Magento\MediaStorage\Service\ImageResize">
-        <plugin name="google_cloud_model_storage_media_resize_image_plugin" type="Thai\S3\Service\Plugin" />
+        <plugin name="thai_s3_service_mediastorage_imageresize_plugin" type="Thai\S3\Service\MediaStorage\ImageResize\Plugin" />
     </type>
     <type name="Magento\Swatches\Helper\Media">
         <plugin name="thai_s3_helper_swatches_media_plugin" type="Thai\S3\Helper\Swatches\Media\Plugin" />

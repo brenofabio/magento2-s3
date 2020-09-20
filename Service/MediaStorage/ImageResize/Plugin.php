@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Thai\S3\Service;
 
 use Magento\Framework\Filesystem;
@@ -26,7 +26,7 @@ class Plugin
             ObjectManager::getInstance()->get(Database::class);
     }
     /**
-     * 
+     *
      */
     public function aroundResizeFromImageName(\Magento\MediaStorage\Service\ImageResize $subject, \Closure $proceed, $originalImageName)
     {
@@ -42,6 +42,6 @@ class Plugin
         }catch(\Exception $e){
             //echo $e->getMessage();
         }
-        
+
     }
 }
