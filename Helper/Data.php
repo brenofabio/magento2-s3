@@ -15,7 +15,7 @@ class Data extends AbstractHelper
      */
     private $useS3;
 
-   public function __construct(
+    public function __construct(
         EncryptorInterface $encryptor,
         \Magento\Framework\App\Helper\Context $context
 
