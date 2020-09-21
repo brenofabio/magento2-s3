@@ -62,12 +62,6 @@ class Plugin
         $mediastoragefilename = $this->imageConfig->getMediaPath($originalImageName);
         $originalImagePath = $this->mediaDirectory->getAbsolutePath($mediastoragefilename);
 
-        $this->logger->debug('Debug', [
-            $originalImageName,
-            $mediastoragefilename,
-            $originalImagePath
-        ]);
-
         if ($this->fileStorageDatabase->checkDbUsage() &&
             !$this->mediaDirectory->isFile($mediastoragefilename)
         ) {
