@@ -159,7 +159,7 @@ require([
             connection: $('system_media_storage_configuration_media_database').value
         };
 
-        new Ajax.Request('<?php /* @escapeNotVerified */ echo $block->getAjaxSyncUrl() ?>', {
+        new Ajax.Request('{$block->escapeJs($block->getAjaxSyncUrl())}', {
             parameters:     params,
             loaderArea:     false,
             asynchronous:   true
