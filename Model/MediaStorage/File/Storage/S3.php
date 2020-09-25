@@ -629,7 +629,7 @@ class S3 extends DataObject
      * @return string
      */
     public function createBackupBucket() {
-        $backupBucket = $this->getBucket() . '_bkp';
+        $backupBucket = $this->getBucket() . '-bkp';
 
         try {
             if (!$this->client->doesBucketExist($backupBucket)) {
