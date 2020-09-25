@@ -202,6 +202,7 @@ class S3 extends DataObject
 
         $bucket = $this->getBucket();
         $backupBucket = $this->createBackupBucket();
+        $backupFolder = 'bkp-' . time();
 
         try {
             $results = $this->client->getPaginator('ListObjects', [
@@ -212,7 +213,7 @@ class S3 extends DataObject
                 foreach ($result['Contents'] as $object) {
                     $this->client->copyObject($this->getAllParams([
                         'Bucket' => $backupBucket,
-                        'Key' => 'bkp-' . time() . '/' . $object['Key'],
+                        'Key' => $backupFolder . '/' . $object['Key'],
                         'CopySource' => $bucket . '/' . $object['Key'],
                     ]));
                 }
@@ -638,6 +639,13 @@ class S3 extends DataObject
                 $this->client->createBucket([
                     'Bucket' => $backupBucket,
                 ]);
+
+                $this->client->waitUntil(
+                    'BucketExists',
+                    [
+                        'Bucket' => $backupBucket
+                    ]
+                );
             }
             catch (S3Exception $e) {
                 $this->logger->error('Failed to create bucket.', [
