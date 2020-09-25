@@ -278,17 +278,21 @@ class S3 extends DataObject
         }
 
         foreach ($this->objects as $object) {
-            if (isset($object['Contents']) && substr($object['Contents'], -1) != '/') {
-                $content = $this->client->getObject([
-                    'Bucket' => $this->getBucket(),
-                    'Key' => $object['Key'],
-                ]);
-                if (isset($content['Body'])) {
-                    $files[] = [
-                        'filename' => $object['Key'],
-                        'content' => (string)$content['Body'],
-                    ];
+            if (isset($object['Contents']) {
+                if (substr($object['Contents'], -1) != '/') {
+                    $content = $this->client->getObject([
+                        'Bucket' => $this->getBucket(),
+                        'Key' => $object['Key'],
+                    ]);
+                    if (isset($content['Body'])) {
+                        $files[] = [
+                            'filename' => $object['Key'],
+                            'content' => (string)$content['Body'],
+                        ];
+                    }
                 }
+            } else {
+                return false;
             }
         }
 
