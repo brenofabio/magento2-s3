@@ -278,7 +278,7 @@ class S3 extends DataObject
         }
 
         foreach ($this->objects as $object) {
-            if (isset($object['Contents']) {
+            if (isset($object['Contents'])) {
                 if (substr($object['Contents'], -1) != '/') {
                     $content = $this->client->getObject([
                         'Bucket' => $this->getBucket(),
