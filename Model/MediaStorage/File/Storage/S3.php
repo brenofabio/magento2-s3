@@ -198,6 +198,8 @@ class S3 extends DataObject
      */
     public function clear()
     {
+        $this->logger->debug('Clear S3', []);
+
         $batch = \Aws\S3\BatchDelete::fromListObjects($this->client, [
             'Bucket' => $this->getBucket(),
         ]);
@@ -213,6 +215,11 @@ class S3 extends DataObject
      */
     public function exportDirectories($offset = 0, $count = 100)
     {
+        $this->logger->debug('exportDirectories', [
+            '$offset: ' => $offset,
+            '$count: ' => $count,
+        ]);
+
         return false;
     }
 
@@ -222,6 +229,11 @@ class S3 extends DataObject
      */
     public function importDirectories(array $dirs = [])
     {
+        $this->logger->debug('importDirectories', [
+            '$dirs: ' => $dirs,
+            '$this: ' => $this,
+        ]);
+
         return $this;
     }
 
@@ -257,6 +269,10 @@ class S3 extends DataObject
             ]);
         }
 
+        $this->logger->debug('listObjects', [
+            '$this->objects: ' => $this->objects,
+        ]);
+
         if (empty($this->objects)) {
             return false;
         }
@@ -276,6 +292,10 @@ class S3 extends DataObject
             }
         }
 
+        $this->logger->debug('getObject', [
+            '$files: ' => $files,
+        ]);
+
         return $files;
     }
 
@@ -285,6 +305,10 @@ class S3 extends DataObject
      */
     public function importFiles(array $files = [])
     {
+        $this->logger->debug('importFiles', [
+            '$files: ' => $files,
+        ]);
+
         foreach ($files as $file) {
             try {
                 $this->client->putObject($this->getAllParams([
