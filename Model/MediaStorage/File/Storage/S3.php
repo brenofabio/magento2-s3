@@ -212,8 +212,8 @@ class S3 extends DataObject
                 foreach ($result['Contents'] as $object) {
                     $this->client->copyObject($this->getAllParams([
                         'Bucket' => $backupBucket,
-                        'Key' => $object['Key'],
-                        'CopySource' => $bucket . '/bkp-' . time() . '/' . $object['Key'],
+                        'Key' => 'bkp-' . time() . '/' . $object['Key'],
+                        'CopySource' => $bucket . '/' . $object['Key'],
                     ]));
                 }
             }
