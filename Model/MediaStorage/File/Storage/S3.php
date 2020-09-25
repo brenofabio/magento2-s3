@@ -282,49 +282,41 @@ class S3 extends DataObject
     {
         $files = [];
 
-        if (empty($this->objects)) {
-            $this->objects = $this->client->listObjects([
-                'Bucket' => $this->getBucket(),
-                'MaxKeys' => $count,
-            ]);
-        } else {
-            $this->objects = $this->client->listObjects([
-                'Bucket' => $this->getBucket(),
-                'MaxKeys' => $count,
-                'Marker' => $this->objects[count($this->objects) - 1],
-            ]);
-        }
-
-        $this->logger->debug('listObjects', [
-            '$this->objects: ' => $this->objects,
-        ]);
-
-        if (empty($this->objects)) {
+        if ($offset > 0) {
             return false;
         }
 
-        foreach ($this->objects as $object) {
-            if (isset($object['Contents'])) {
-                if (substr($object['Contents'], -1) != '/') {
-                    $content = $this->client->getObject([
-                        'Bucket' => $this->getBucket(),
-                        'Key' => $object['Key'],
-                    ]);
-                    if (isset($content['Body'])) {
-                        $files[] = [
-                            'filename' => $object['Key'],
-                            'content' => (string)$content['Body'],
-                        ];
-                    }
+        $results = $this->client->getPaginator('ListObjects', [
+            'Bucket' => $this->getBucket()
+        ]);
+
+        $this->logger->debug('getPaginator', [
+            '$results: ' => $results,
+        ]);
+
+        foreach ($results as $result) {
+            foreach ($result['Contents'] as $object) {
+                $content = $this->client->getObject([
+                    'Bucket' => $this->getBucket(),
+                    'Key' => $object['Key'],
+                ]);
+
+                if (isset($content['Body'])) {
+                    $files[] = [
+                        'filename' => $object['Key'],
+                        'content' => (string)$content['Body'],
+                    ];
                 }
-            } else {
-                return false;
+
+                $this->logger->debug('getObject', [
+                    'Key: ' => $object['Key'],
+                ]);
             }
         }
 
-        $this->logger->debug('getObject', [
-            '$files: ' => $files,
-        ]);
+        if ($files === []) {
+            return false;
+        }
 
         return $files;
     }
