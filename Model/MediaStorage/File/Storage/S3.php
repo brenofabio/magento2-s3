@@ -200,6 +200,29 @@ class S3 extends DataObject
     {
         $this->logger->debug('Clear S3', []);
 
+        $bucket = $this->getBucket();
+        $backupBucket = $this->createBackupBucket();
+
+        try {
+            $results = $this->client->getPaginator('ListObjects', [
+                'Bucket' => $bucket
+            ]);
+
+            foreach ($results as $result) {
+                foreach ($result['Contents'] as $object) {
+                    $this->client->copyObject($this->getAllParams([
+                        'Bucket' => $backupBucket,
+                        'Key' => $object['Key'],
+                        'CopySource' => $bucket . '/bkp-' . time() . '/' . $object['Key'],
+                    ]));
+                }
+            }
+        } catch (S3Exception $e) {
+            $this->logger->error('Failed to backup bucket.', [
+                $e->getMessage()
+            ]);
+        }
+
         $batch = \Aws\S3\BatchDelete::fromListObjects($this->client, [
             'Bucket' => $this->getBucket(),
         ]);
@@ -597,6 +620,29 @@ class S3 extends DataObject
                     $file
                 ]);
             }
+        }
+    }
+
+    /**
+     * Create backup bucket before clear
+     *
+     * @return string
+     */
+    public function createBackupBucket() {
+        $backupBucket = $this->getBucket() . '_bkp';
+
+        try {
+            if (!$this->client->doesBucketExist($backupBucket)) {
+                $result = $this->client->createBucket([
+                    'Bucket' => $backupBucket,
+                ]);
+            }
+
+            return $backupBucket;
+        } catch (S3Exception $e) {
+            $this->logger->error('Failed to create bucket.', [
+                $e->getMessage()
+            ]);
         }
     }
 }
