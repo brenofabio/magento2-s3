@@ -633,18 +633,19 @@ class S3 extends DataObject
     public function createBackupBucket() {
         $backupBucket = $this->getBucket() . '-bkp';
 
-        try {
-            if (!$this->client->doesBucketExist($backupBucket)) {
-                $result = $this->client->createBucket([
+        if (!$this->client->doesBucketExist($backupBucket)) {
+            try {
+                $this->client->createBucket([
                     'Bucket' => $backupBucket,
                 ]);
             }
-
-            return $backupBucket;
-        } catch (S3Exception $e) {
-            $this->logger->error('Failed to create bucket.', [
-                $e->getMessage()
-            ]);
+            catch (S3Exception $e) {
+                $this->logger->error('Failed to create bucket.', [
+                    $e->getMessage()
+                ]);
+            }
         }
+
+        return $backupBucket;
     }
 }
