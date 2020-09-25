@@ -221,6 +221,8 @@ class S3 extends DataObject
             $this->logger->error('Failed to backup bucket.', [
                 $e->getMessage()
             ]);
+
+            return $this;
         }
 
         $batch = \Aws\S3\BatchDelete::fromListObjects($this->client, [
