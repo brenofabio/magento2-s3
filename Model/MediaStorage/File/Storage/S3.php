@@ -295,22 +295,26 @@ class S3 extends DataObject
         ]);
 
         foreach ($results as $result) {
-            foreach ($result['Contents'] as $object) {
-                $content = $this->client->getObject([
-                    'Bucket' => $this->getBucket(),
-                    'Key' => $object['Key'],
-                ]);
+            if (isset($result['Contents'])) {
+                foreach ($result['Contents'] as $object) {
+                    $content = $this->client->getObject([
+                        'Bucket' => $this->getBucket(),
+                        'Key' => $object['Key'],
+                    ]);
 
-                if (isset($content['Body'])) {
-                    $files[] = [
-                        'filename' => $object['Key'],
-                        'content' => (string)$content['Body'],
-                    ];
+                    if (isset($content['Body'])) {
+                        $files[] = [
+                            'filename' => $object['Key'],
+                            'content' => (string)$content['Body'],
+                        ];
+                    }
+
+                    $this->logger->debug('getObject', [
+                        'Key: ' => $object['Key'],
+                    ]);
                 }
-
-                $this->logger->debug('getObject', [
-                    'Key: ' => $object['Key'],
-                ]);
+            } else {
+                return false;
             }
         }
 
