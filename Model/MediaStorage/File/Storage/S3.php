@@ -198,6 +198,34 @@ class S3 extends DataObject
      */
     public function clear()
     {
+        $bucket = $this->getBucket();
+        $backupBucket = $this->createBackupBucket();
+        $backupFolder = 'bkp-' . time();
+
+        try {
+            $results = $this->client->getPaginator('ListObjects', [
+                'Bucket' => $bucket
+            ]);
+
+            foreach ($results as $result) {
+                if (isset($result['Contents'])) {
+                    foreach ($result['Contents'] as $object) {
+                        $this->client->copyObject($this->getAllParams([
+                            'Bucket' => $backupBucket,
+                            'Key' => $backupFolder . '/' . $object['Key'],
+                            'CopySource' => $bucket . '/' . $object['Key'],
+                        ]));
+                    }
+                }
+            }
+        } catch (S3Exception $e) {
+            $this->logger->error('Failed to backup bucket.', [
+                $e->getMessage()
+            ]);
+
+            return $this;
+        }
+
         $batch = \Aws\S3\BatchDelete::fromListObjects($this->client, [
             'Bucket' => $this->getBucket(),
         ]);
@@ -244,36 +272,36 @@ class S3 extends DataObject
     {
         $files = [];
 
-        if (empty($this->objects)) {
-            $this->objects = $this->client->listObjects([
-                'Bucket' => $this->getBucket(),
-                'MaxKeys' => $count,
-            ]);
-        } else {
-            $this->objects = $this->client->listObjects([
-                'Bucket' => $this->getBucket(),
-                'MaxKeys' => $count,
-                'Marker' => $this->objects[count($this->objects) - 1],
-            ]);
-        }
-
-        if (empty($this->objects)) {
+        if ($offset > 0) {
             return false;
         }
 
-        foreach ($this->objects as $object) {
-            if (isset($object['Contents']) && substr($object['Contents'], -1) != '/') {
-                $content = $this->client->getObject([
-                    'Bucket' => $this->getBucket(),
-                    'Key' => $object['Key'],
-                ]);
-                if (isset($content['Body'])) {
-                    $files[] = [
-                        'filename' => $object['Key'],
-                        'content' => (string)$content['Body'],
-                    ];
+        $results = $this->client->getPaginator('ListObjects', [
+            'Bucket' => $this->getBucket()
+        ]);
+
+        foreach ($results as $result) {
+            if (isset($result['Contents'])) {
+                foreach ($result['Contents'] as $object) {
+                    $content = $this->client->getObject([
+                        'Bucket' => $this->getBucket(),
+                        'Key' => $object['Key'],
+                    ]);
+
+                    if (isset($content['Body'])) {
+                        $files[] = [
+                            'filename' => $object['Key'],
+                            'content' => (string)$content['Body'],
+                        ];
+                    }
                 }
+            } else {
+                return false;
             }
+        }
+
+        if ($files === []) {
+            return false;
         }
 
         return $files;
@@ -570,5 +598,36 @@ class S3 extends DataObject
                 ]);
             }
         }
+    }
+
+    /**
+     * Create backup before clear Bucket
+     *
+     * @return string
+     */
+    public function createBackupBucket() {
+        $backupBucket = $this->getBucket() . '-bkp';
+
+        if (!$this->client->doesBucketExist($backupBucket)) {
+            try {
+                $this->client->createBucket([
+                    'Bucket' => $backupBucket,
+                ]);
+
+                $this->client->waitUntil(
+                    'BucketExists',
+                    [
+                        'Bucket' => $backupBucket
+                    ]
+                );
+            }
+            catch (S3Exception $e) {
+                $this->logger->error('Failed to create bucket.', [
+                    $e->getMessage()
+                ]);
+            }
+        }
+
+        return $backupBucket;
     }
 }
