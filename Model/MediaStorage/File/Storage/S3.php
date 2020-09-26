@@ -210,12 +210,14 @@ class S3 extends DataObject
             ]);
 
             foreach ($results as $result) {
-                foreach ($result['Contents'] as $object) {
-                    $this->client->copyObject($this->getAllParams([
-                        'Bucket' => $backupBucket,
-                        'Key' => $backupFolder . '/' . $object['Key'],
-                        'CopySource' => $bucket . '/' . $object['Key'],
-                    ]));
+                if (isset($result['Contents'])) {
+                    foreach ($result['Contents'] as $object) {
+                        $this->client->copyObject($this->getAllParams([
+                            'Bucket' => $backupBucket,
+                            'Key' => $backupFolder . '/' . $object['Key'],
+                            'CopySource' => $bucket . '/' . $object['Key'],
+                        ]));
+                    }
                 }
             }
         } catch (S3Exception $e) {
@@ -623,7 +625,7 @@ class S3 extends DataObject
     }
 
     /**
-     * Create backup bucket before clear
+     * Create backup before clear Bucket
      *
      * @return string
      */
