@@ -198,8 +198,6 @@ class S3 extends DataObject
      */
     public function clear()
     {
-        $this->logger->debug('Clear S3', []);
-
         $bucket = $this->getBucket();
         $backupBucket = $this->createBackupBucket();
         $backupFolder = 'bkp-' . time();
@@ -243,11 +241,6 @@ class S3 extends DataObject
      */
     public function exportDirectories($offset = 0, $count = 100)
     {
-        $this->logger->debug('exportDirectories', [
-            '$offset: ' => $offset,
-            '$count: ' => $count,
-        ]);
-
         return false;
     }
 
@@ -257,11 +250,6 @@ class S3 extends DataObject
      */
     public function importDirectories(array $dirs = [])
     {
-        $this->logger->debug('importDirectories', [
-            '$dirs: ' => $dirs,
-            '$this: ' => $this,
-        ]);
-
         return $this;
     }
 
@@ -292,10 +280,6 @@ class S3 extends DataObject
             'Bucket' => $this->getBucket()
         ]);
 
-        $this->logger->debug('getPaginator', [
-            '$results: ' => $results,
-        ]);
-
         foreach ($results as $result) {
             if (isset($result['Contents'])) {
                 foreach ($result['Contents'] as $object) {
@@ -310,10 +294,6 @@ class S3 extends DataObject
                             'content' => (string)$content['Body'],
                         ];
                     }
-
-                    $this->logger->debug('getObject', [
-                        'Key: ' => $object['Key'],
-                    ]);
                 }
             } else {
                 return false;
@@ -333,10 +313,6 @@ class S3 extends DataObject
      */
     public function importFiles(array $files = [])
     {
-        $this->logger->debug('importFiles', [
-            '$files: ' => $files,
-        ]);
-
         foreach ($files as $file) {
             try {
                 $this->client->putObject($this->getAllParams([
