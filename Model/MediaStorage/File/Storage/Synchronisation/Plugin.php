@@ -1,6 +1,7 @@
 <?php
 namespace Thai\S3\Model\MediaStorage\File\Storage\Synchronisation;
 
+use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Filesystem\Directory\WriteInterface as DirectoryWrite;
 use Magento\Framework\Filesystem\File\WriteInterface;
@@ -31,14 +32,15 @@ class Plugin
 
     /**
      * @param S3Factory $storageFactory
-     * @param DirectoryWrite $directory
+     * @param \Magento\Framework\Filesystem $filesystem,
+
      */
     public function __construct(
         S3Factory $storageFactory,
-        DirectoryWrite $directory
+        \Magento\Framework\Filesystem $filesystem
     ) {
         $this->storageFactory = $storageFactory;
-        $this->mediaDirectory = $directory;
+        $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
     }
 
     /**
